@@ -54,12 +54,11 @@ const MyEditor = (props) => {
 	const [titleChange, setTitleChange] = useState(false)
 	const [fileExtensionValue, setfileExtensionValue] = useState(0)
 
-	const [currentUsers, setcurrentUsers] = useState('');
 	const [message, setMessage] = useState('');
 	const [messages, setMessages] = useState([]);
 	const [fontsize, setFontsize] = useState("16px")
 
-	const { enqueueSnackbar, closeSnackbar } = useSnackbar();
+	const { enqueueSnackbar } = useSnackbar();
 
 	// Ref for editor
 	const editorRef = useRef()

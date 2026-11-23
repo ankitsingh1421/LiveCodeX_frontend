@@ -56,7 +56,7 @@ const useStyles = makeStyles((theme) => ({
 export default function Login() {
     const classes = useStyles();
 
-  	const { enqueueSnackbar, closeSnackbar } = useSnackbar();
+  	const { enqueueSnackbar } = useSnackbar();
 
     const [passwordShown, setPasswordShown] = useState(false);
 

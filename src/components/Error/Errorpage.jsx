@@ -8,7 +8,7 @@ const Errorpage = () => {
             <header className="bg-dark">
                 <div className="container">
                     <div className="banner-text">
-                        <img src={warning} height="192px" width="192px"></img>
+                        <img src={warning} height="192px" width="192px" alt="Warning" />
                         <h1 className="text-white">ERROR 404</h1>
                         <h1 className="text-white">PAGE NOT FOUND</h1>
                         <p className="banner-btn text-white">

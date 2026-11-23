@@ -36,7 +36,7 @@ const Room = (props) => {
 	const [RoomFontSize, setRoomFontSize] = useState("");
 	const [RoomTheme, setRoomTheme] = useState("vs-dark");
 	const [isError, setisError] = useState(false)
-	const { enqueueSnackbar, closeSnackbar } = useSnackbar();
+	const { enqueueSnackbar } = useSnackbar();
 
 	const runCode = async () => {
 		const script = codeInRoom;
