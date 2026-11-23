@@ -17,10 +17,10 @@ const App = () => {
 
 	const [socket, setSocket] = useState()
 	const [nameOfUser, setNameOfUser] = useState("")
-	// const socket = io("http://localhost:5000");
+	// const socket = io("https://livecodex-backend-nb40.onrender.com");
 	const [isLogout, setIsLogout] = useState('0');
 	useEffect(() => {
-		const s = io("http://localhost:5000");
+		const s = io("https://livecodex-backend-nb40.onrender.com");
 		console.log(s);
 		setSocket(s);
 		
@@ -34,7 +34,7 @@ const App = () => {
 	useEffect(() => {
 
 		if (isDisconnected===true) {
-			const s = io("http://localhost:5000");
+			const s = io("https://livecodex-backend-nb40.onrender.com");
 			console.log(s);
 			setSocket(s);
 			console.log("USEEFFECT")
