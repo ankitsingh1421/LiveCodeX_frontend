@@ -11,16 +11,16 @@ import { SnackbarProvider } from "notistack";
 import CreateAccount from './pages/CreateAccount';
 import LoginPage from './pages/LoginPage';
 import Logout from './pages/Logout';
+import { SOCKET_URL } from './api';
 
 
 const App = () => {
 
 	const [socket, setSocket] = useState()
 	const [nameOfUser, setNameOfUser] = useState("")
-	// const socket = io("https://livecodex-backend-nb40.onrender.com");
 	const [isLogout, setIsLogout] = useState('0');
 	useEffect(() => {
-		const s = io("https://livecodex-backend-nb40.onrender.com");
+		const s = io(SOCKET_URL);
 		console.log(s);
 		setSocket(s);
 		
@@ -34,7 +34,7 @@ const App = () => {
 	useEffect(() => {
 
 		if (isDisconnected===true) {
-			const s = io("https://livecodex-backend-nb40.onrender.com");
+			const s = io(SOCKET_URL);
 			console.log(s);
 			setSocket(s);
 			console.log("USEEFFECT")

@@ -5,6 +5,7 @@ import roombackground from './../../assets/Backgrounds/rooms.svg';
 import Button from '@material-ui/core/Button';
 import './Rooms.css';
 import Typewriter from 'typewriter-effect';
+import { apiUrl } from '../../api';
 
 const Rooms = (props) => {
     const history = useHistory();
@@ -18,7 +19,7 @@ const Rooms = (props) => {
     useEffect(() => {
         const checkForAuthentication = async () => {
             try {
-                const res = await fetch('/roomsforuser', {
+                const res = await fetch(apiUrl('/roomsforuser'), {
                     method: "GET",
                     headers: {
                         Accept: 'application/json',

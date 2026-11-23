@@ -2,6 +2,13 @@
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
+## Backend API
+
+The production client sends API requests to `https://livecodex-backend-nb40.onrender.com`.
+Set `REACT_APP_API_URL` in the deployment environment to use a different backend URL,
+then rebuild and redeploy the client. During local development, requests use the CRA
+proxy configured in `package.json` and the Socket.IO server at `http://localhost:5000`.
+
 ## Available Scripts
 
 In the project directory, you can run:

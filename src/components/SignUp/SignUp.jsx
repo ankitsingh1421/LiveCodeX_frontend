@@ -13,6 +13,7 @@ import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import {useHistory} from 'react-router-dom'
+import { apiUrl } from '../../api';
 import './signup.css'
 
 function Copyright() {
@@ -82,31 +83,30 @@ export default function SignUp() {
     const postData = async (e) => {
         e.preventDefault();
         const { userName, email, password } = user;
-        console.log(user);
-        console.log(userName);
-        console.log(email);
-        const res = await fetch("/register", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                userName, email, password
-            })
-        })
+        try {
+            const res = await fetch(apiUrl('/register'), {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    userName, email, password
+                })
+            });
+            const contentType = res.headers.get('content-type') || '';
+            const data = contentType.includes('application/json') ? await res.json() : null;
 
-        const data = await res.json();
-        console.log(data);
-        console.log(res);
-        if (res.status===422 || !data) {
-            window.alert("Invalid registration request");
-            console.log("Invalid registration request");
-        }
-        else {
+            if (!res.ok) {
+                throw new Error(data?.error || `Registration failed (${res.status})`);
+            }
+            if (!data) {
+                throw new Error('The server returned an invalid response. Please try again.');
+            }
+
             window.alert("Registration Successfull");
-            console.log("Registration Successfull");
-
             history.push("/login");
+        } catch (error) {
+            window.alert(error.message || "Unable to register. Please try again.");
         }
     }
 

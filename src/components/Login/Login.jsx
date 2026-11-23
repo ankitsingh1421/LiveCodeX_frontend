@@ -14,6 +14,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import {useHistory} from 'react-router-dom'
 import { useSnackbar } from 'notistack';
+import { apiUrl } from '../../api';
 
 function Copyright() {
   return (
@@ -85,11 +86,12 @@ export default function Login() {
         const { userName, password } = user;
         console.log(user);
         console.log(userName);
-        const res = await fetch("/login", {
+        const res = await fetch(apiUrl('/login'), {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
             },
+            credentials: "include",
             body: JSON.stringify({
                 userName, password
             })

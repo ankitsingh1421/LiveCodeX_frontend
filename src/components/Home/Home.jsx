@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from 'react'
 import { Link, NavLink } from 'react-router-dom';
 import './Home.css';
+import { apiUrl } from '../../api';
 
 const Home = (props) => {
 	const [Isuser, setIsuser] = useState("0")
 
 	const checkForUser = async () => {
 		try {
-			const res = await fetch('/checkforUser', {
+			const res = await fetch(apiUrl('/checkforUser'), {
 				method: "GET",
 				headers: {
 					Accept: 'application/json',

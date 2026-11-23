@@ -1,12 +1,13 @@
 import React, { useEffect } from 'react'
 import { useHistory } from 'react-router';
+import { apiUrl } from '../api';
 
 const Logout = (props) => {
 
 
     const history = useHistory();
     useEffect(()=>{
-        fetch('/logout', {
+        fetch(apiUrl('/logout'), {
             method: "GET",
             headers: {
                 Accept: 'application/json',

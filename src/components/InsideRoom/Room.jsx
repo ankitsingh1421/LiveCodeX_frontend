@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import MyEditor from './../Editor/myEditor';
 import Box from './../EditorBox/Box';
 import axios from "axios";
+import { apiUrl } from '../../api';
 import InputBox from './../EditorBox/InputBox';
 import { useSnackbar } from 'notistack';
 import './Room.css';
@@ -55,7 +56,7 @@ const Room = (props) => {
 
 		const response = await axios({
 			method: "POST",
-			url: `http://localhost:5000/execute`,
+			url: apiUrl('/execute'),
 			data: {
 				script: script,
 				language: language,
