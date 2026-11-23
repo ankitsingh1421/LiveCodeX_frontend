@@ -4,6 +4,7 @@ import Box from './../EditorBox/Box';
 import axios from "axios";
 import InputBox from './../EditorBox/InputBox';
 import { useSnackbar } from 'notistack';
+import './Room.css';
 
 import 'react-reflex/styles.css'
 
@@ -98,7 +99,7 @@ const Room = (props) => {
 	}
 
 	return (
-		<div>
+		<div className="room-view">
 			<div className="d-flex">
 				<MyEditor
 					socket={socket}
@@ -113,14 +114,14 @@ const Room = (props) => {
 				</MyEditor>
 			</div>
 			
-			<div className="d-flex">
-				<div className="border mr-auto ml-1" style={{width:"37.5%"}}>
+			<div className="room-output-grid">
+				<div className="room-output-panel">
 					<InputBox feature="Input" theme={RoomTheme} setProperty={setInput} fontSize={RoomFontSize}/>
 				</div>
-				<div className="border" style={{width:"37.5%"}}>
+				<div className="room-output-panel">
 					<Box feature={isError?"Error":"Output"} theme={RoomTheme} value={output} fontSize={RoomFontSize}/>
 				</div>
-				<div className="border ml-auto mr-1" style={{width:"24%"}}>
+				<div className="room-output-panel">
 					<Box feature="Stats" theme={RoomTheme} value={stats} fontSize={RoomFontSize}/>
 				</div>
 				

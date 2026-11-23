@@ -2,7 +2,6 @@ import React, { useRef, useState, useEffect } from 'react';
 import { NavLink} from "react-router-dom";
 import { useParams } from "react-router-dom";
 import Editor from "@monaco-editor/react"
-import { IconContext } from "react-icons";
 import {
 	BrowserView,
 	MobileView
@@ -21,26 +20,37 @@ import PublishRoundedIcon from '@material-ui/icons/PublishRounded';
 import ExitToAppRoundedIcon from '@material-ui/icons/ExitToAppRounded';
 import fileDownload from 'js-file-download'
 import PlayArrowRoundedIcon from '@material-ui/icons/PlayArrowRounded';
+import './editor.css';
 
 const MyEditor = (props) => {
 
 	const socket = props.socket;
+	const { nameOfUser, setcodeInRoom, setlanguageInRoom } = props;
     const history = useHistory();
+	let { id } = useParams();
+
+	const [savedRoomState] = useState(() => {
+		try {
+			const savedState = window.localStorage.getItem(`room-${id}`);
+			return savedState ? JSON.parse(savedState) : null;
+		} catch (error) {
+			console.error("Failed to restore saved room state", error);
+			return null;
+		}
+	});
 
 	const [theme, setTheme] = useState("vs-dark");
 
-	const [language, setLanguage] = useState("cpp")
-	// Check if editor is ready
-	const [isEditorReady, setIsEditorReady] = useState(false)
+	const [language, setLanguage] = useState(savedRoomState?.language || "cpp")
 	// Send chunks of code on change
-	const [editorCode, seteditorCode] = useState("")
+	const [editorCode, seteditorCode] = useState(savedRoomState?.code || "")
 	// Set value of editor
-	const [value, setValue] = useState('')
-	const [valid, setValid] = useState(false)
+	const [value, setValue] = useState(savedRoomState?.code || '')
+	const [roomJoined, setRoomJoined] = useState(false)
 	const [sendInitialData, setSendInitialData] = useState(false)
 	const [users, setUsers] = useState(0)
-	const [title, setTitle] = useState("Untitled")
-	const [titleInfo, setTitleInfo] = useState("Untitled")
+	const [title, setTitle] = useState(savedRoomState?.title || "Untitled")
+	const [titleInfo, setTitleInfo] = useState(savedRoomState?.title || "Untitled")
 	const [titleChange, setTitleChange] = useState(false)
 	const [fileExtensionValue, setfileExtensionValue] = useState(0)
 
@@ -51,36 +61,25 @@ const MyEditor = (props) => {
 
 	const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
-	let { id } = useParams();
-
-	// Check if room exists
-
-	useEffect(() => {
-		if (socket===undefined) {
-			props.setIsDisconnected(true);
-			history.push("/");
-		} else {
-			socket.emit('room-id', id)
-			setValid(true)
-		}
-		return ()=>{
-
-		}
-	}, [])
-
 	// Ref for editor
 	const editorRef = useRef()
 
 	// Called on initialization, adds ref
 	const handleEditorDidMount = (_, editor) => {
-		setIsEditorReady(true);
 		editorRef.current = editor
+		setcodeInRoom(editorCode)
+		setlanguageInRoom(language)
 	}
 
 	// Called whenever there is a change in the editor
 	const handleEditorChange = (value, event) => {
-		seteditorCode(value)
-		props.setcodeInRoom(value)
+		const code = value || ""
+		seteditorCode(code)
+		setValue(code)
+		setcodeInRoom(code)
+		if (roomJoined && socket) {
+			socket.emit('code-change', code)
+		}
 	};
 
 	// For theme of code editor
@@ -107,117 +106,125 @@ const MyEditor = (props) => {
 		});
 	}
 
-	// If language changes on one socket, emit to all other
-	useEffect(() => {
-		if (socket===undefined) {
-			props.setIsDisconnected(true);
-			history.push("/");
-		} else {
-			socket.emit('language-change', language)
-		}
-		
-	}, [language])
-
-
-	// If there is a code change on a socket, emit to all other
-	useEffect(() => {
-		if (socket===undefined) {
-			history.push("/");
-		} else {
-			socket.emit('code-change', editorCode)
-		}
-		
-	}, [editorCode])
-
-	// If there is a title change on a socket, emit to all other
-	useEffect(() => {
-		if (socket===undefined) {
-			props.setIsDisconnected(true);
-			history.push("/");
-		} else {
-			socket.emit('title-change', title)
-		}
-		
-	}, [title])
-
-
 	// Recieve code, title and language changes
 	useEffect(() => {
-		if (socket===undefined) {
-			props.setIsDisconnected(true);
-			history.push("/");
-		}
-		else{
-			socket.on('code-update', (data) => {
-				setValue(data)
-				props.setcodeInRoom(data.code)
-			})
-			socket.on('language-update', (data) => {
-				setLanguage(data)
-				props.setlanguageInRoom(data)
-			})
-	
-			socket.on('title-update', (data) => {
-				setTitleInfo(data)
-			})
-	
-			socket.on('receive-message', message => {
-				setMessages(messages => [...messages, message]);
-			});
-	
-			socket.on('room-check', (data) => {
-				if (data === false) {
-					setValid(false)
-				} else {
-					socket.emit('join-room', { id, nameOfUser: props.nameOfUser })
-				}
-	
-			})
-	
-			socket.on('request-info', (data) => {
-				setSendInitialData(true)
-			})
-	
-			// Triggered if new user joins
-			socket.on('accept-info', (data) => {
-				setTitleInfo(data.title)
-				setLanguage(data.language)
-				props.setlanguageInRoom(data.language)
-				setValue(data.code)
-				props.setcodeInRoom(data.code)
-			})
-	
-			// Update participants
-			socket.on('joined-users', (data) => {
-				setUsers(data)
-			})
+		if (!socket) {
+			return;
 		}
 
-	}, [])
+		const joinRoom = () => {
+			socket.emit('join-room', { id, nameOfUser })
+			setRoomJoined(true)
+		}
+
+		const handleCodeUpdate = (data) => {
+			const code = typeof data === "string" ? data : data.code
+			seteditorCode(code)
+			setValue(code)
+			setcodeInRoom(code)
+		}
+
+		const handleLanguageUpdate = (data) => {
+			setLanguage(data)
+			setlanguageInRoom(data)
+		}
+
+		const handleTitleUpdate = (data) => {
+			setTitle(data)
+			setTitleInfo(data)
+			setTitleChange(false)
+		}
+
+		const handleReceiveMessage = (message) => {
+			setMessages(messages => [...messages, message]);
+		}
+
+		const handleRequestInfo = () => {
+			setSendInitialData(true)
+		}
+
+		const handleAcceptInfo = (data) => {
+			setTitle(data.title)
+			setTitleInfo(data.title)
+			setLanguage(data.language)
+			setlanguageInRoom(data.language)
+			seteditorCode(data.code)
+			setValue(data.code)
+			setcodeInRoom(data.code)
+		}
+
+		const handleJoinedUsers = (data) => {
+			setUsers(data)
+		}
+
+		const handleRoomCheck = (exists) => {
+			if (!exists && savedRoomState) {
+				socket.emit('created-room', id)
+				joinRoom()
+			} else if (exists) {
+				joinRoom()
+			}
+		}
+
+		socket.on('code-update', handleCodeUpdate)
+		socket.on('language-update', handleLanguageUpdate)
+		socket.on('title-update', handleTitleUpdate)
+		socket.on('receive-message', handleReceiveMessage)
+		socket.on('room-check', handleRoomCheck)
+		socket.on('request-info', handleRequestInfo)
+		socket.on('accept-info', handleAcceptInfo)
+		socket.on('joined-users', handleJoinedUsers)
+
+		socket.emit('room-id', id)
+
+		return () => {
+			socket.off('code-update', handleCodeUpdate)
+			socket.off('language-update', handleLanguageUpdate)
+			socket.off('title-update', handleTitleUpdate)
+			socket.off('receive-message', handleReceiveMessage)
+			socket.off('room-check', handleRoomCheck)
+			socket.off('request-info', handleRequestInfo)
+			socket.off('accept-info', handleAcceptInfo)
+			socket.off('joined-users', handleJoinedUsers)
+		}
+	}, [socket, id, nameOfUser, savedRoomState, setcodeInRoom, setlanguageInRoom])
+
+	useEffect(() => {
+		if (roomJoined) {
+			try {
+				window.localStorage.setItem(`room-${id}`, JSON.stringify({
+					code: editorCode,
+					title,
+					language
+				}))
+			} catch (error) {
+				console.error("Failed to save room state", error);
+			}
+		}
+	}, [roomJoined, id, editorCode, title, language])
 
 
 	// If a new user join, send him current language and title used by other sockets.
 	useEffect(() => {
-		if (socket===undefined) {
-			props.setIsDisconnected(true);
-			history.push("/")
-		} else {
-			if (sendInitialData === true) {
-				socket.emit('user-join', { code: editorCode, title: title, language: language })
-				setSendInitialData(false)
-			}
+		if (socket && sendInitialData === true) {
+			socket.emit('user-join', { code: editorCode, title, language })
+			setSendInitialData(false)
 		}
 		
-	}, [sendInitialData])
+	}, [socket, sendInitialData, editorCode, title, language])
 
 	const languages = ["cpp", "python", "javascript", "c", "java", "go"]
 	const languageExtension = ["cpp", "py", "js", "c", "java", "go"]
 	const fontSizes = ["10px", "12px", "14px", "16px", "18px", "20px", "22px", "24px", "26px", "28px", "30px"]
 
 	const changeLanguage = (e) => {
-		setLanguage(languages[e.target.value])
-		props.setlanguageInRoom(languages[e.target.value])
+		const nextLanguage = languages[e.target.value]
+		setLanguage(nextLanguage)
+		setlanguageInRoom(nextLanguage)
 		setfileExtensionValue(e.target.value)
+		if (roomJoined && socket) {
+			socket.emit('language-change', nextLanguage)
+		}
 	}
 
 	const changeFontSize = (e) => {
@@ -227,15 +234,14 @@ const MyEditor = (props) => {
 
 	const titleUpdating = (e) => {
 		setTitleInfo(e.target.value)
-		setTitleChange(true)
+		setTitleChange(e.target.value !== title)
 	}
 
 	const leaveRoom = (e) =>{
 		if (socket===undefined) {
-			props.setIsDisconnected(true);
 			history.push("/");
 		} else {
-			socket.emit('leaving', {nameOfUser: props.nameOfUser});
+			socket.emit('leaving', {nameOfUser});
 			socket.disconnect();
 			props.setIsDisconnected(true);
 			history.push("/");
@@ -246,14 +252,25 @@ const MyEditor = (props) => {
 		event.preventDefault();
 
 		if (message) {
-			socket.emit('sendMessage', { message, sender: props.nameOfUser });
+			socket.emit('sendMessage', { message, sender: nameOfUser });
 			setMessage("");
 		}
 	}
 
 	const titleUpdated = (e) => {
-		setTitle(titleInfo)
+		e.preventDefault()
+		const nextTitle = titleInfo.trim()
+		if (!nextTitle) {
+			enqueueSnackbar('Room title cannot be empty', { variant: "warning" })
+			return
+		}
+
+		setTitleInfo(nextTitle)
+		setTitle(nextTitle)
 		setTitleChange(false)
+		if (roomJoined && socket) {
+			socket.emit('title-change', nextTitle)
+		}
 	}
 
 	const downloadCode = (e) =>{
@@ -267,9 +284,11 @@ const MyEditor = (props) => {
 		reader.onload = async (e) => { 
 		  const text = (e.target.result)
 		  setValue(text)
-		  props.setcodeInRoom(text)
+		  setcodeInRoom(text)
 		  seteditorCode(text)
-		//   alert(text)
+		  if (roomJoined && socket) {
+			socket.emit('code-change', text)
+		  }
 		};
 		reader.readAsText(e.target.files[0])
 	}
@@ -285,19 +304,16 @@ const MyEditor = (props) => {
 		<>
 			<BrowserView className="w-100">
 
-				<nav className="navbar navbar-expand-lg navbar-light bg-white shadow mb-1 py-0">
+				<nav className="navbar navbar-expand-lg navbar-light bg-white shadow mb-1 py-0 room-navbar">
 					<NavLink className="navbar-brand" to="/" onClick={leaveRoom}>LiveCodeX</NavLink>
 					<button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
 						<span className="navbar-toggler-icon"></span>
 					</button>
-					<form class="d-flex">
-						<input class="form-control me-2" type="text" placeholder="Enter file name here" aria-label="Search" value={titleInfo} onChange={titleUpdating} />
+					<form className="d-flex room-title-form" onSubmit={titleUpdated}>
+						<input className="form-control me-2 room-title-input" type="text" placeholder="Enter file name here" aria-label="Room title" value={titleInfo} onChange={titleUpdating} />
 						{titleChange === true &&
-							<button className="btn ml-2 btn-outline-success">
-								<IconContext.Provider value={{size:"1.4em"}}>
-										<RiCheckFill className="checkIcon" onClick={titleUpdated} disabled={!isEditorReady}></RiCheckFill>
-								</IconContext.Provider>
-
+							<button type="submit" className="btn ml-2 btn-outline-success room-title-save" aria-label="Save room title" title="Save room title" disabled={!titleInfo.trim()}>
+								<RiCheckFill aria-hidden="true" />
 							</button>
 						}
 					</form>
@@ -391,8 +407,8 @@ const MyEditor = (props) => {
 					</div>
 				</nav>
 
-				<div className="d-flex">
-					<section className="mr-auto ml-1" style={{width:"68.5%"}}>
+				<div className="room-workspace">
+					<section className="room-editor-panel">
 						<Editor
 							height="65vh"
 							width="100%"
@@ -405,8 +421,8 @@ const MyEditor = (props) => {
 							options={{ fontSize: fontsize}}
 						/>
 					</section>
-					<section className="ml-auto mr-1 d-flex" style={{width:"30.5%"}}>
-						<div className="mr-auto d-flex flex-column border border-warning" style={{ minWidth: "60vh", width:"100%", height: "65vh", backgroundColor: "white", borderRadius: "20px"}}>
+					<section className="room-chat-panel">
+						<div className="d-flex flex-column border border-warning room-chat-box">
 							<Messages messages={messages} nameOfUser={props.nameOfUser}>
 							</Messages>
 							<Input message={message} setMessage={setMessage} sendMessage={sendMessage}></Input>

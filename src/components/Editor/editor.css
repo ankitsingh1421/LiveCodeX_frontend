@@ -136,18 +136,76 @@ body {
     cursor: pointer;
 }
 
-.checkIcon {
-    transform: scale(1);
-    color: white;
-    position: absolute;
-    left: 43.5%;
-    cursor: pointer;
-    margin-top: 0.35%;
-}
-
 .logoEditor {
     font-size: 1.25em;
     margin-left: 1.5%;
+}
+
+.room-navbar {
+    display: flex;
+    width: 100%;
+    min-width: 0;
+    flex-wrap: wrap;
+}
+
+.room-navbar .navbar-brand {
+    flex-shrink: 0;
+}
+
+.room-title-form {
+    min-width: 0;
+    flex: 0 1 270px;
+    align-items: center;
+}
+
+.room-title-input {
+    min-width: 0;
+    flex: 1 1 auto;
+}
+
+.room-title-save {
+    display: inline-flex;
+    min-width: 38px;
+    align-items: center;
+    justify-content: center;
+}
+
+.room-navbar .navbar-collapse {
+    min-width: 0;
+    flex: 1 1 600px;
+}
+
+.room-navbar .navbar-nav {
+    min-width: 0;
+    flex-wrap: wrap;
+}
+
+.room-workspace {
+    display: grid;
+    width: 100%;
+    min-width: 0;
+    grid-template-columns: minmax(0, 2.2fr) minmax(240px, 1fr);
+    gap: .5rem;
+    padding: 0 .5rem .5rem;
+}
+
+.room-editor-panel,
+.room-chat-panel {
+    min-width: 0;
+    overflow: hidden;
+}
+
+.room-chat-box {
+    width: 100%;
+    min-width: 0;
+    height: 65vh;
+    border-radius: 12px;
+    background: #fff;
+}
+
+.room-chat-box .messages {
+    width: 100%;
+    min-height: 0;
 }
 
 .mobile-notValid {
@@ -159,4 +217,20 @@ body {
     font-family: 'Poppins', sans-serif;
     flex-wrap: wrap;
     height: 95vh;
+}
+
+@media only screen and (max-width: 900px) {
+    .room-workspace {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .room-chat-box {
+        height: 38vh;
+    }
+}
+
+@media only screen and (max-width: 780px) {
+    .room-title-form {
+        flex: 1 1 180px;
+    }
 }

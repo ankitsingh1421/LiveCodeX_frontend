@@ -1,25 +1,364 @@
-.roomsLink:hover{
-    color: #ffffff !important;
+.rooms-page {
+    position: relative;
+    display: flex;
+    min-height: 100vh;
+    flex-direction: column;
+    overflow: hidden;
+    background-color: #111a2e;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    color: #fff;
+    font-family: 'DM Sans', 'Segoe UI', sans-serif;
 }
 
-.roomsLink{
+.rooms-navbar {
+    z-index: 2;
+    width: 100%;
+    padding: 1.1rem 0;
+    background: rgba(8, 14, 28, .3);
+    backdrop-filter: blur(12px);
+}
+
+.rooms-navbar .container {
+    max-width: 1220px;
+}
+
+.rooms-brand {
+    color: #fff !important;
+    font-family: 'Manrope', sans-serif;
+    font-size: 1.35rem !important;
+    font-weight: 800;
+    letter-spacing: -.06em;
+}
+
+.rooms-brand span { color: #69e2c1; }
+
+.roomsLink {
+    margin-left: auto;
+    color: rgba(255,255,255,.77) !important;
+    font-size: .88rem;
     text-decoration: none;
-    display: inline-block;
+    transition: color .2s ease;
 }
 
-.roomsLink::after{
-    content: "";
-    display: block;
-    width: 0;
-    height: 2px;
-    background: #3498db;
-    transition: width 1s;
+.roomsLink:hover { color: #69e2c1 !important; }
+
+.rooms-content {
+    position: relative;
+    display: grid;
+    width: 100%;
+    max-width: 1220px;
+    flex: 1;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    align-items: center;
+    gap: 2.5rem;
+    margin: 0 auto;
+    padding: 4.5rem 1rem 5.5rem;
 }
-.banner-text h2{
-    font-family: 'Poppins', sans-serif;
+
+.rooms-intro { position: relative; z-index: 1; }
+
+.rooms-kicker {
+    color: #8fe6d0;
+    font-size: .71rem;
+    font-weight: 700;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+}
+
+.rooms-intro h1 {
+    margin: 1rem 0 .85rem;
+    color: #fff;
+    font-family: 'Manrope', sans-serif;
+    font-size: clamp(3rem, 5.2vw, 5.2rem);
+    font-weight: 800;
+    letter-spacing: -.075em;
+    line-height: 1.02;
+}
+
+.rooms-intro h1 span { color: #69e2c1; }
+.rooms-greeting { margin: 0 0 .25rem; color: rgba(255,255,255,.84); font-size: 1.08rem; }
+.rooms-prompt { min-height: 1.5rem; margin-bottom: 1.65rem; color: rgba(255,255,255,.54); font-size: .88rem; }
+
+.rooms-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .75rem;
+}
+
+.rooms-create-button.MuiButton-root,
+.rooms-join-button.MuiButton-root {
+    min-height: 50px;
+    padding: .7rem 1.15rem;
+    border-radius: 7px;
+    font-family: inherit;
+    font-size: .86rem;
+    font-weight: 700;
+    text-transform: none;
+}
+
+.rooms-create-button.MuiButton-root {
+    background: #69e2c1;
+    color: #10251f;
+}
+
+.rooms-create-button.MuiButton-root:hover { background: #8aefd5; }
+.rooms-create-button.MuiButton-root.Mui-disabled { background: rgba(105,226,193,.45); color: rgba(16,37,31,.7); }
+
+.rooms-action-icon { margin-right: .55rem; font-size: 1.35rem; font-weight: 400; line-height: 1; }
+
+.rooms-join-button.MuiButton-root {
+    border-color: rgba(255,255,255,.35);
     color: #fff;
 }
-.roomsLink:hover::after{
+
+.rooms-join-button.MuiButton-root:hover { border-color: #69e2c1; background: rgba(105,226,193,.08); }
+.rooms-join-button.MuiButton-root.Mui-disabled { border-color: rgba(255,255,255,.17); color: rgba(255,255,255,.4); }
+.rooms-join-button span { margin-left: .55rem; }
+
+.rooms-help {
+    margin: 1.25rem 0 0;
+    color: rgba(255,255,255,.48);
+    font-size: .75rem;
+}
+
+.rooms-help span { margin-right: .35rem; color: #69e2c1; font-size: .6rem; }
+
+.rooms-error {
+    margin: .8rem 0 0;
+    color: #ffb4b4;
+    font-size: .82rem;
+}
+
+.rooms-visual {
+    position: relative;
+    display: grid;
+    min-height: 410px;
+    place-items: center;
+}
+
+.rooms-visual-glow {
+    position: absolute;
+    width: 340px;
+    height: 340px;
+    border-radius: 50%;
+    background: rgba(76,123,214,.22);
+    filter: blur(45px);
+}
+
+.rooms-visual-card {
+    position: relative;
+    z-index: 1;
+    width: min(100%, 470px);
+    overflow: hidden;
+    border: 1px solid rgba(255,255,255,.16);
+    border-radius: 11px;
+    background: rgba(15,24,42,.88);
+    box-shadow: 0 26px 90px rgba(0,0,0,.36);
+    transform: rotate(2deg);
+    backdrop-filter: blur(14px);
+}
+
+.rooms-visual-top {
+    display: flex;
+    height: 47px;
+    align-items: center;
+    gap: 6px;
+    padding: 0 14px;
+    border-bottom: 1px solid rgba(255,255,255,.1);
+}
+
+.rooms-visual-top > span {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #fb7185;
+}
+
+.rooms-visual-top > span:nth-child(2) { background: #fbbf24; }
+.rooms-visual-top > span:nth-child(3) { background: #4ade80; }
+.rooms-visual-top b { margin-left: .7rem; color: rgba(255,255,255,.72); font-size: .72rem; font-weight: 500; }
+.rooms-visual-top i { margin-left: auto; color: #69e2c1; font-size: .61rem; font-style: normal; }
+
+.rooms-visual-code {
+    display: grid;
+    grid-template-columns: 28px 1fr;
+    gap: .85rem .5rem;
+    padding: 1.7rem 1.4rem;
+    color: #71809b;
+    font-family: 'SFMono-Regular', Consolas, monospace;
+    font-size: .77rem;
+}
+
+.rooms-visual-code code { color: #d7e3f4; }
+.rooms-visual-code em { color: #c792ea; font-style: normal; }
+.rooms-visual-code strong { color: #c3e88d; font-weight: 500; }
+.rooms-visual-code u { color: #82aaff; text-decoration: none; }
+.rooms-visual-code code b { color: #6f809b; font-weight: 400; }
+
+.rooms-visual-people {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    padding: 12px 16px;
+    border-top: 1px solid rgba(255,255,255,.1);
+}
+
+.rooms-visual-people span {
+    display: grid;
+    width: 25px;
+    height: 25px;
+    place-items: center;
+    border: 2px solid #142038;
+    border-radius: 50%;
+    background: #fb7185;
+    color: #fff;
+    font-size: .58rem;
+    font-weight: 700;
+}
+
+.rooms-visual-people span:nth-child(2) { margin-left: -10px; background: #818cf8; }
+.rooms-visual-people small { margin-left: 4px; color: rgba(255,255,255,.59); font-size: .68rem; }
+
+.rooms-floating-note {
+    position: absolute;
+    right: -2px;
+    bottom: 45px;
+    z-index: 2;
+    padding: .75rem 1rem;
+    border: 1px solid rgba(255,255,255,.18);
+    border-radius: 7px;
+    background: rgba(28,40,64,.9);
+    box-shadow: 0 12px 30px rgba(0,0,0,.2);
+    color: rgba(255,255,255,.8);
+    font-size: .7rem;
+}
+
+.rooms-floating-note span { margin-right: .4rem; color: #69e2c1; }
+
+.rooms-bottom-note {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    padding: 1.15rem;
+    border-top: 1px solid rgba(255,255,255,.1);
+    color: rgba(255,255,255,.38);
+    font-size: .61rem;
+    font-weight: 700;
+    letter-spacing: .12em;
+}
+
+.rooms-bottom-note i { width: 3px; height: 3px; border-radius: 50%; background: #69e2c1; }
+
+.join-room-backdrop {
+    position: fixed;
+    z-index: 30;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    padding: 1rem;
+    background: rgba(5,10,20,.75);
+    backdrop-filter: blur(8px);
+}
+
+.join-room-dialog {
+    position: relative;
+    width: min(100%, 465px);
+    padding: 2.2rem;
+    border: 1px solid rgba(255,255,255,.16);
+    border-radius: 14px;
+    background: #fff;
+    box-shadow: 0 28px 100px rgba(0,0,0,.35);
+    color: #1b2740;
+}
+
+.join-room-close {
+    position: absolute;
+    top: .8rem;
+    right: 1rem;
+    border: 0;
+    background: none;
+    color: #788297;
+    cursor: pointer;
+    font-size: 1.65rem;
+    line-height: 1;
+}
+
+.join-room-icon {
+    display: grid;
+    width: 43px;
+    height: 43px;
+    margin-bottom: 1.15rem;
+    place-items: center;
+    border-radius: 11px;
+    background: #e4f8f2;
+    color: #168765;
+    font-size: 1.2rem;
+}
+
+.join-room-dialog .rooms-kicker { color: #478d7c; font-size: .64rem; }
+.join-room-dialog h2 { margin: .45rem 0 .45rem; color: #1a2740; font-family: 'Manrope', sans-serif; font-size: 1.75rem; font-weight: 800; letter-spacing: -.05em; }
+.join-room-dialog > p { margin-bottom: 1.45rem; color: #758096; font-size: .84rem; line-height: 1.6; }
+.join-room-dialog label { display: block; margin-bottom: .45rem; color: #354158; font-size: .76rem; font-weight: 700; }
+
+.join-room-input {
+    display: block;
     width: 100%;
-    transition: width 1s;
+    min-height: 49px;
+    padding: .75rem .85rem;
+    border: 1px solid #dfe4ed;
+    border-radius: 6px;
+    background: #fbfcfe;
+    color: #1b2740;
+    font-family: inherit;
+    font-size: .88rem;
+    transition: border-color .2s ease, box-shadow .2s ease;
+}
+
+.join-room-input:focus {
+    border-color: #4bb99a;
+    box-shadow: 0 0 0 3px rgba(75,185,154,.13);
+    outline: none;
+}
+
+.join-room-error { margin: .5rem 0 0; color: #c03948; font-size: .76rem; }
+.join-room-actions { display: flex; justify-content: flex-end; gap: .65rem; margin-top: 1.4rem; }
+
+.join-room-cancel,
+.join-room-submit {
+    min-height: 42px;
+    padding: .62rem .95rem;
+    border-radius: 6px;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: .79rem;
+    font-weight: 700;
+}
+
+.join-room-cancel { border: 1px solid #e0e5ed; background: #fff; color: #556177; }
+.join-room-cancel:hover { background: #f6f8fb; }
+.join-room-submit { border: 1px solid #69e2c1; background: #69e2c1; color: #10251f; }
+.join-room-submit:hover:not(:disabled) { background: #8aefd5; }
+.join-room-submit:disabled { cursor: not-allowed; opacity: .55; }
+.join-room-submit span { margin-left: .35rem; }
+
+@media (max-width: 767.98px) {
+    .rooms-content {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 1rem;
+        padding: 3.5rem 1.25rem 2.5rem;
+    }
+    .rooms-intro h1 { font-size: clamp(3rem, 12vw, 4.6rem); }
+    .rooms-visual { min-height: 290px; }
+    .rooms-visual-card { transform: none; }
+    .rooms-floating-note { right: 0; bottom: 19px; }
+    .rooms-bottom-note { gap: .55rem; font-size: .51rem; letter-spacing: .08em; }
+}
+
+@media (max-width: 420px) {
+    .rooms-actions { align-items: stretch; flex-direction: column; }
+    .rooms-actions .MuiButton-root { width: 100%; }
+    .join-room-dialog { padding: 1.7rem 1.3rem; }
 }
